@@ -196,8 +196,10 @@ footer p{color:#aab6ce;font-size:13px}
 <input id="newCity" placeholder="Ваш город">
 <label>Описание задачи</label>
 <textarea id="newDescription" placeholder="Подробности заказа"></textarea>
-<button class="btn" onclick="openModal('auth')">Войти и опубликовать</button>
-<p class="notice">Сначала подключим регистрацию, затем публикацию заказов.</p>
+
+<button class="btn" onclick="publishOrder()">Опубликовать заказ</button>
+<p class="notice" id="orderMessage"></p>
+
 </div>
 </div>
 
