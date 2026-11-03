@@ -170,19 +170,21 @@ footer p{color:#aab6ce;font-size:13px}
 </div>
 </footer>
 
+
 <div class="modal" id="auth">
 <div class="modalbox">
 <button class="close" onclick="closeModal('auth')">✕</button>
-<h2>Вход и регистрация</h2>
-<p>Чтобы пользоваться сервисом, понадобится аккаунт.</p>
+<h2 id="authTitle">Вход</h2>
+<p id="authMessage" class="notice"></p>
 <label>Электронная почта</label>
-<input type="email" placeholder="name@example.com">
+<input id="authEmail" type="email" placeholder="name@example.com">
 <label>Пароль</label>
-<input type="password" placeholder="Ваш пароль">
-<button class="btn" onclick="alert('Подключим настоящую регистрацию на следующем этапе!')">Продолжить</button>
-<p class="notice">Регистрация и вход будут подключены к базе данных.</p>
+<input id="authPassword" type="password" placeholder="Минимум 6 символов">
+<button class="btn" id="authButton" onclick="authAction()">Войти</button>
+<button class="btn light" onclick="toggleAuth()" id="authToggle">Создать аккаунт</button>
 </div>
 </div>
+
 
 <div class="modal" id="order">
 <div class="modalbox">
