@@ -215,6 +215,7 @@ footer p{color:#aab6ce;font-size:13px}
 
 
 <script>
+
 const supabaseClient = window.supabase.createClient(
   'https://qejzlggnhejnshuzcphg.supabase.co',
   'sb_publishable_GCsIk5xPP9ypWDJH_HkHTQ_M4ceVUbq'
@@ -257,7 +258,6 @@ function openOrder(title) {
 
 async function publishOrder() {
   const message = document.getElementById('orderMessage');
-
   const title = document.getElementById('newTitle').value.trim();
   const city = document.getElementById('newCity').value.trim();
   const description = document.getElementById('newDescription').value.trim();
@@ -278,14 +278,12 @@ async function publishOrder() {
 
   message.textContent = 'Публикуем заказ...';
 
-  const { error } = await supabaseClient
-    .from('orders')
-    .insert({
-      user_id: user.id,
-      title: title,
-      city: city,
-      description: description
-    });
+  const { error } = await supabaseClient.from('orders').insert({
+    user_id: user.id,
+    title: title,
+    city: city,
+    description: description
+  });
 
   if (error) {
     message.textContent = 'Ошибка публикации: ' + error.message;
@@ -297,26 +295,8 @@ async function publishOrder() {
   document.getElementById('newTitle').value = '';
   document.getElementById('newCity').value = '';
   document.getElementById('newDescription').value = '';
-}
 
-  const { error } = await supabaseClient
-    .from('orders')
-    .insert({
-      user_id: user.id,
-      title: title,
-      city: city,
-      description: description
-    });
-
-  if (error) {
-    message.textContent = 'Ошибка публикации: ' + error.message;
-    return;
-  }
-
-  message.textContent = 'Заказ успешно опубликован!';
-  document.getElementById('newTitle').value = '';
-  document.getElementById('newCity').value = '';
-  document.getElementById('newDescription').value = '';
+  await loadOrders();
 }
 
 function toggleAuth() {
@@ -354,15 +334,9 @@ async function authAction() {
   let result;
 
   if (isRegister) {
-    result = await supabaseClient.auth.signUp({
-      email,
-      password
-    });
+    result = await supabaseClient.auth.signUp({ email, password });
   } else {
-    result = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+    result = await supabaseClient.auth.signInWithPassword({ email, password });
   }
 
   if (result.error) {
@@ -376,7 +350,60 @@ async function authAction() {
   }
 
   message.textContent = 'Успешно! Ты вошёл в аккаунт.';
-} 
+  closeModal('auth');
+}
+
+async function loadOrders() {
+  const list = document.getElementById('ordersList');
+  const empty = document.getElementById('ordersEmpty');
+
+  list.innerHTML = '';
+  empty.style.display = 'none';
+
+  const { data, error } = await supabaseClient
+    .from('orders')
+    .select('id, title, city, description, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    empty.textContent = 'Ошибка загрузки: ' + error.message;
+    empty.style.display = 'block';
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    empty.textContent = 'Пока заказов нет.';
+    empty.style.display = 'block';
+    return;
+  }
+
+  data.forEach(order => {
+    const card = document.createElement('div');
+    card.className = 'service';
+
+    const title = document.createElement('h3');
+    title.textContent = order.title;
+
+    const city = document.createElement('p');
+    city.textContent = '📍 ' + order.city;
+
+    const description = document.createElement('p');
+    description.textContent = order.description || 'Без описания';
+
+    const date = document.createElement('p');
+    date.textContent = new Date(order.created_at).toLocaleDateString('ru-RU');
+
+    card.append(title, city, description, date);
+    list.appendChild(card);
+  });
+}
+
+loadOrders();
+
 </script>
 </body>
 </html>
+
+
+
+  
