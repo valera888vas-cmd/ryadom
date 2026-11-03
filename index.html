@@ -201,29 +201,106 @@ footer p{color:#aab6ce;font-size:13px}
 </div>
 </div>
 
+
 <script>
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-function filterCategory(category){
-document.getElementById('searchInput').value=category;
-searchServices();
-document.getElementById('allservices').scrollIntoView({behavior:'smooth'});
+const supabaseClient = window.supabase.createClient(
+  'https://qejzlggnhejnshuzcphg.supabase.co',
+  'sb_publishable_GCsIk5xPP9ypWDJH_HkHTQ_M4ceVUbq'
+);
+
+let isRegister = false;
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
 }
-function searchServices(){
-const q=document.getElementById('searchInput').value.toLowerCase().trim();
-let count=0;
-document.querySelectorAll('.service[data-category]').forEach(card=>{
-const text=card.innerText.toLowerCase();
-const visible=!q||text.includes(q)||card.dataset.category.toLowerCase().includes(q);
-card.style.display=visible?'block':'none';
-if(visible)count++;
-});
-document.getElementById('emptyServices').style.display=count?'none':'block';
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
 }
-function openOrder(title){
-document.getElementById('newTitle').value=title;
-openModal('order');
+
+function filterCategory(category) {
+  document.getElementById('searchInput').value = category;
+  searchServices();
+  document.getElementById('allservices').scrollIntoView({behavior:'smooth'});
 }
+
+function searchServices() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let count = 0;
+
+  document.querySelectorAll('.service[data-category]').forEach(card => {
+    const text = card.innerText.toLowerCase();
+    const visible = !q || text.includes(q) || card.dataset.category.toLowerCase().includes(q);
+    card.style.display = visible ? 'block' : 'none';
+    if (visible) count++;
+  });
+
+  document.getElementById('emptyServices').style.display = count ? 'none' : 'block';
+}
+
+function openOrder(title) {
+  document.getElementById('newTitle').value = title;
+  openModal('order');
+}
+
+function toggleAuth() {
+  isRegister = !isRegister;
+
+  document.getElementById('authTitle').textContent =
+    isRegister ? 'Регистрация' : 'Вход';
+
+  document.getElementById('authButton').textContent =
+    isRegister ? 'Создать аккаунт' : 'Войти';
+
+  document.getElementById('authToggle').textContent =
+    isRegister ? 'Уже есть аккаунт? Войти' : 'Создать аккаунт';
+
+  document.getElementById('authMessage').textContent = '';
+}
+
+async function authAction() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const message = document.getElementById('authMessage');
+
+  if (!email || !password) {
+    message.textContent = 'Заполни email и пароль.';
+    return;
+  }
+
+  if (password.length < 6) {
+    message.textContent = 'Пароль должен содержать минимум 6 символов.';
+    return;
+  }
+
+  message.textContent = 'Подождите...';
+
+  let result;
+
+  if (isRegister) {
+    result = await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+  } else {
+    result = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+  }
+
+  if (result.error) {
+    message.textContent = 'Ошибка: ' + result.error.message;
+    return;
+  }
+
+  if (isRegister && !result.data.session) {
+    message.textContent = 'Аккаунт создан! Проверь почту и подтверди регистрацию.';
+    return;
+  }
+
+  message.textContent = 'Успешно! Ты вошёл в аккаунт.';
+} 
 </script>
 </body>
 </html>
