@@ -2,79 +2,127 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4269ef">
 <title>Рядом — услуги рядом с тобой</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-:root{--bg:#f5f7fb;--dark:#18243a;--blue:#4269ef;--muted:#7b879c;--card:#fff}
+:root{
+--bg:#f5f7fb;--dark:#18243a;--blue:#4269ef;
+--muted:#7b879c;--border:#e9edf5;--white:#fff;
+--green:#15966a;--red:#df4757
+}
 body{margin:0;background:var(--bg);color:var(--dark);font-family:Arial,sans-serif}
-button,input{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer;border:0}
-header{background:white;border-bottom:1px solid #e9edf5;position:sticky;top:0;z-index:5}
-.nav{max-width:1150px;margin:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+a{color:inherit;text-decoration:none}
+header{background:white;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.nav{max-width:1150px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
 .logo{font-size:25px;font-weight:800;color:var(--blue)}
-.logo span{color:#18243a}
+.logo span{color:var(--dark)}
 .navlinks{display:flex;gap:22px;align-items:center}
-.navlinks a{color:#5b6880;text-decoration:none;font-size:14px}
-.btn{background:var(--blue);color:white;padding:13px 19px;border-radius:12px;font-weight:700}
+.navlinks a{color:#5b6880;font-size:14px}
+.navright{display:flex;align-items:center;gap:10px}
+.userlabel{font-size:13px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.btn{background:var(--blue);color:white;padding:12px 18px;border-radius:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{filter:brightness(.96)}
 .btn.light{background:#edf1ff;color:var(--blue)}
 .btn.white{background:white;color:var(--blue)}
+.btn.red{background:#fff0f1;color:var(--red)}
+.btn.small{padding:9px 12px;font-size:13px}
 .container{max-width:1150px;margin:auto;padding:25px 20px}
-.hero{background:linear-gradient(120deg,#233c83,#4269ef);color:white;border-radius:25px;padding:55px 45px;position:relative;overflow:hidden}
+.hero{background:linear-gradient(120deg,#233c83,#4269ef);color:white;border-radius:25px;padding:55px 45px;overflow:hidden}
 .hero h1{font-size:48px;max-width:620px;line-height:1.1;margin:0 0 18px}
 .hero p{color:#dce5ff;font-size:17px;line-height:1.6;max-width:520px}
 .search{display:flex;background:white;padding:7px;border-radius:14px;max-width:650px;margin-top:28px;gap:8px}
 .search input{border:0;outline:0;padding:12px;flex:1;min-width:0;color:#222}
 .search button{border-radius:10px}
 .section{margin-top:40px}
-.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 h2{font-size:27px;margin:0}
-.sectionhead a{color:var(--blue);text-decoration:none;font-size:14px}
 .categories{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.cat{background:white;border:1px solid #e9edf5;border-radius:17px;padding:22px 12px;text-align:center;transition:.2s}
+.cat{background:white;border:1px solid var(--border);border-radius:17px;padding:22px 12px;text-align:center;transition:.2s}
 .cat:hover{transform:translateY(-3px);border-color:#b9c8ff}
 .emoji{font-size:32px;display:block;margin-bottom:12px}
 .cat strong{font-size:14px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.service{background:white;border:1px solid #e9edf5;border-radius:18px;padding:20px}
+.service{background:white;border:1px solid var(--border);border-radius:18px;padding:20px;min-width:0}
 .service .emoji{font-size:27px}
 .service h3{margin:0 0 9px;font-size:18px}
-.service p{color:var(--muted);font-size:14px;line-height:1.5}
+.service p{color:var(--muted);font-size:14px;line-height:1.5;overflow-wrap:anywhere}
 .service .btn{margin-top:10px;width:100%}
 .benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.benefit{background:white;border-radius:17px;padding:22px;border:1px solid #e9edf5}
+.benefit{background:white;border-radius:17px;padding:22px;border:1px solid var(--border)}
 .benefit b{display:block;margin:10px 0}
 .benefit p{font-size:14px;color:var(--muted);line-height:1.5}
 footer{margin-top:55px;background:#18243a;color:white;padding:35px 20px}
 .footerinner{max-width:1150px;margin:auto;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 footer p{color:#aab6ce;font-size:13px}
-.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:15px;z-index:10;overflow:auto}
 .modal.open{display:flex}
-.modalbox{background:white;border-radius:20px;padding:25px;width:100%;max-width:420px}
+.modalbox{background:white;border-radius:20px;padding:25px;width:100%;max-width:450px;max-height:90vh;overflow:auto}
 .modalbox h2{margin-bottom:20px}
-.modalbox input,.modalbox textarea,.modalbox select{width:100%;padding:13px;border:1px solid #dce2ee;border-radius:10px;margin:7px 0 15px}
+.modalbox input,.modalbox textarea,.modalbox select{width:100%;padding:13px;border:1px solid #dce2ee;border-radius:10px;margin:7px 0 15px;background:white}
+.modalbox textarea{min-height:100px;resize:vertical}
 .modalbox label{font-size:13px;color:#64718a}
 .modalbox .btn{width:100%;margin-top:10px}
 .close{float:right;background:#edf1f8;border-radius:9px;padding:7px 11px}
-.notice{font-size:13px;color:#7b879c;margin-top:12px}
-.empty{display:none;color:#7b879c;padding:20px}
-@media(max-width:850px){.categories{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.navlinks{display:none}.hero{padding:38px 25px}.hero h1{font-size:37px}}
-@media(max-width:520px){.container{padding:17px 14px}.hero{border-radius:19px;padding:32px 20px}.hero h1{font-size:32px}.search{flex-direction:column}.search button{width:100%}.categories{gap:9px}.cat{padding:17px 7px}.cat strong{font-size:12px}.cards,.benefits{grid-template-columns:1fr}.sectionhead h2{font-size:23px}.btn{padding:12px 15px}}
+.notice{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5}
+.notice.error{color:var(--red)}
+.notice.success{color:var(--green)}
+.empty{display:none;color:var(--muted);padding:20px;background:white;border-radius:14px}
+.profilebox{background:white;border:1px solid var(--border);border-radius:18px;padding:24px}
+.profileemail{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.orderdate{font-size:12px;color:var(--muted)}
+.orderactions{margin-top:12px}
+.badge{display:inline-block;background:#edf1ff;color:var(--blue);padding:6px 10px;border-radius:20px;font-size:12px}
+.hidden{display:none!important}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+@media(max-width:850px){
+.categories{grid-template-columns:repeat(3,1fr)}
+.cards{grid-template-columns:repeat(2,1fr)}
+.navlinks{display:none}
+.hero{padding:38px 25px}
+.hero h1{font-size:37px}
+}
+@media(max-width:520px){
+.container{padding:17px 14px}
+.hero{border-radius:19px;padding:32px 20px}
+.hero h1{font-size:32px}
+.search{flex-direction:column}
+.search button{width:100%}
+.categories{gap:9px}
+.cat{padding:17px 7px}
+.cat strong{font-size:12px}
+.cards,.benefits{grid-template-columns:1fr}
+.sectionhead h2{font-size:23px}
+.btn{padding:12px 15px}
+.nav{padding:12px}
+.logo{font-size:22px}
+.userlabel{display:none}
+}
 </style>
 </head>
+
 <body>
 
 <header>
 <nav class="nav">
-<div class="logo">✦ <span>Рядом</span></div>
+<a href="#" class="logo">✦ <span>Рядом</span></a>
 <div class="navlinks">
 <a href="#services">Услуги</a>
 <a href="#advantages">Как это работает</a>
-<a href="#orders">Заказы</a>
+<a href="#publishedOrders">Заказы</a>
+<a href="#profile" id="profileNav" class="hidden">Мой кабинет</a>
 </div>
-<button class="btn" onclick="openModal('auth')">Войти</button>
+<div class="navright">
+<span id="userLabel" class="userlabel"></span>
+<button class="btn" id="authHeaderBtn" onclick="openAuth()">Войти</button>
+</div>
 </nav>
 </header>
 
@@ -82,7 +130,7 @@ footer p{color:#aab6ce;font-size:13px}
 
 <section class="hero">
 <h1>Нужна помощь?<br>Она уже рядом.</h1>
-<p>Находи проверенных специалистов, заказывай услуги и решай бытовые задачи проще.</p>
+<p>Находи специалистов, заказывай услуги и решай бытовые задачи проще.</p>
 <div class="search">
 <input id="searchInput" placeholder="Что нужно сделать? Например, ремонт">
 <button class="btn" onclick="searchServices()">Найти услугу</button>
@@ -92,7 +140,7 @@ footer p{color:#aab6ce;font-size:13px}
 <section class="section" id="services">
 <div class="sectionhead">
 <h2>Популярные категории</h2>
-<a href="#allservices">Все услуги →</a>
+<a href="#allservices" style="color:var(--blue)">Все услуги →</a>
 </div>
 <div class="categories">
 <div class="cat" onclick="filterCategory('Ремонт')"><span class="emoji">🔧</span><strong>Ремонт</strong></div>
@@ -142,24 +190,40 @@ footer p{color:#aab6ce;font-size:13px}
 </section>
 
 <section class="section" id="orders">
-<div class="sectionhead">
-<h2>Нужна помощь?</h2>
-</div>
+<div class="sectionhead"><h2>Нужна помощь?</h2></div>
 <div class="service">
 <h3>Создай свой заказ</h3>
 <p>Опиши задачу, укажи город — и исполнители смогут предложить свою помощь.</p>
-<button class="btn" onclick="openModal('order')">＋ Создать заказ</button>
+<button class="btn" onclick="openOrder()">＋ Создать заказ</button>
 </div>
 </section>
 
 <section class="section" id="publishedOrders">
-  <div class="sectionhead">
-    <h2>Опубликованные заказы</h2>
-    <button class="btn light" onclick="loadOrders()">Обновить</button>
-  </div>
+<div class="sectionhead">
+<h2>Опубликованные заказы</h2>
+<button class="btn light" onclick="loadOrders()">Обновить</button>
+</div>
+<div class="cards" id="ordersList"></div>
+<p class="empty" id="ordersEmpty">Пока заказов нет.</p>
+</section>
 
-  <div class="cards" id="ordersList"></div>
-  <p class="empty" id="ordersEmpty">Пока заказов нет.</p>
+<section class="section hidden" id="profile">
+<div class="sectionhead">
+<h2>Мой кабинет</h2>
+<button class="btn light" onclick="loadMyOrders()">Обновить</button>
+</div>
+<div class="profilebox">
+<span class="badge">Личный кабинет</span>
+<h3 id="profileName">Пользователь</h3>
+<p class="profileemail" id="profileEmail"></p>
+<button class="btn light" onclick="openOrder()">＋ Создать заказ</button>
+<button class="btn red" onclick="logout()">Выйти из аккаунта</button>
+</div>
+<div class="section">
+<div class="sectionhead"><h2>Мои заказы</h2></div>
+<div class="cards" id="myOrdersList"></div>
+<p class="empty" id="myOrdersEmpty">У тебя пока нет заказов.</p>
+</div>
 </section>
 
 <section class="section" id="advantages">
@@ -180,229 +244,396 @@ footer p{color:#aab6ce;font-size:13px}
 </div>
 </footer>
 
-
+<!-- ОКНО ВХОДА -->
 <div class="modal" id="auth">
 <div class="modalbox">
 <button class="close" onclick="closeModal('auth')">✕</button>
 <h2 id="authTitle">Вход</h2>
 <p id="authMessage" class="notice"></p>
 <label>Электронная почта</label>
-<input id="authEmail" type="email" placeholder="name@example.com">
+<input id="authEmail" type="email" placeholder="name@example.com" autocomplete="email">
 <label>Пароль</label>
-<input id="authPassword" type="password" placeholder="Минимум 6 символов">
+<input id="authPassword" type="password" placeholder="Минимум 6 символов" autocomplete="current-password">
 <button class="btn" id="authButton" onclick="authAction()">Войти</button>
 <button class="btn light" onclick="toggleAuth()" id="authToggle">Создать аккаунт</button>
 </div>
 </div>
 
-
+<!-- ОКНО ЗАКАЗА -->
 <div class="modal" id="order">
 <div class="modalbox">
 <button class="close" onclick="closeModal('order')">✕</button>
 <h2>Создать заказ</h2>
+<p id="orderMessage" class="notice"></p>
 <label>Что нужно сделать?</label>
 <input id="newTitle" placeholder="Например, починить кран">
 <label>Город</label>
 <input id="newCity" placeholder="Ваш город">
 <label>Описание задачи</label>
 <textarea id="newDescription" placeholder="Подробности заказа"></textarea>
-
 <button class="btn" onclick="publishOrder()">Опубликовать заказ</button>
-<p class="notice" id="orderMessage"></p>
-
 </div>
 </div>
-
 
 <script>
-
+/* ===== SUPABASE ===== */
 const supabaseClient = window.supabase.createClient(
   'https://qejzlggnhejnshuzcphg.supabase.co',
   'sb_publishable_GCsIk5xPP9ypWDJH_HkHTQ_M4ceVUbq'
 );
 
 let isRegister = false;
+let currentUser = null;
 
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
+/* ===== ВСПОМОГАТЕЛЬНОЕ ===== */
+function el(id){return document.getElementById(id)}
+
+function showMessage(id,text,type=''){
+  const node=el(id);
+  node.textContent=text;
+  node.className='notice '+type;
 }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
+function openModal(id){el(id).classList.add('open')}
+function closeModal(id){el(id).classList.remove('open')}
+
+function openAuth(){
+  isRegister=false;
+  el('authTitle').textContent='Вход';
+  el('authButton').textContent='Войти';
+  el('authToggle').textContent='Создать аккаунт';
+  showMessage('authMessage','');
+  openModal('auth');
 }
 
-function filterCategory(category) {
-  document.getElementById('searchInput').value = category;
+function filterCategory(category){
+  el('searchInput').value=category;
   searchServices();
-  document.getElementById('allservices').scrollIntoView({behavior:'smooth'});
+  el('allservices').scrollIntoView({behavior:'smooth'});
 }
 
-function searchServices() {
-  const q = document.getElementById('searchInput').value.toLowerCase().trim();
-  let count = 0;
-
-  document.querySelectorAll('.service[data-category]').forEach(card => {
-    const text = card.innerText.toLowerCase();
-    const visible = !q || text.includes(q) || card.dataset.category.toLowerCase().includes(q);
-    card.style.display = visible ? 'block' : 'none';
-    if (visible) count++;
+function searchServices(){
+  const q=el('searchInput').value.toLowerCase().trim();
+  let count=0;
+  document.querySelectorAll('.service[data-category]').forEach(card=>{
+    const text=card.innerText.toLowerCase();
+    const visible=!q||text.includes(q)||card.dataset.category.toLowerCase().includes(q);
+    card.style.display=visible?'block':'none';
+    if(visible)count++;
   });
-
-  document.getElementById('emptyServices').style.display = count ? 'none' : 'block';
+  el('emptyServices').style.display=count?'none':'block';
 }
 
-function openOrder(title) {
-  document.getElementById('newTitle').value = title;
+/* ===== РЕГИСТРАЦИЯ И ВХОД ===== */
+function toggleAuth(){
+  isRegister=!isRegister;
+  el('authTitle').textContent=isRegister?'Регистрация':'Вход';
+  el('authButton').textContent=isRegister?'Создать аккаунт':'Войти';
+  el('authToggle').textContent=isRegister?'Уже есть аккаунт? Войти':'Создать аккаунт';
+  el('authPassword').autocomplete=isRegister?'new-password':'current-password';
+  showMessage('authMessage','');
+}
+
+async function authAction(){
+  const email=el('authEmail').value.trim();
+  const password=el('authPassword').value;
+  const message=el('authMessage');
+
+  if(!email||!password){
+    showMessage('authMessage','Заполни email и пароль.','error');
+    return;
+  }
+  if(password.length<6){
+    showMessage('authMessage','Пароль должен содержать минимум 6 символов.','error');
+    return;
+  }
+
+  el('authButton').disabled=true;
+  el('authButton').textContent='Подождите...';
+
+  try{
+    let result;
+    if(isRegister){
+      result=await supabaseClient.auth.signUp({email,password});
+    }else{
+      result=await supabaseClient.auth.signInWithPassword({email,password});
+    }
+
+    if(result.error){
+      showMessage('authMessage','Ошибка: '+result.error.message,'error');
+      return;
+    }
+
+    if(isRegister&&!result.data.session){
+      showMessage('authMessage','Аккаунт создан! Проверь почту и подтверди регистрацию.','success');
+      return;
+    }
+
+    showMessage('authMessage','Успешно!','success');
+    closeModal('auth');
+    await updateUserInterface(result.data.user||result.data.session?.user);
+    await loadMyOrders();
+  }catch(error){
+    showMessage('authMessage','Ошибка: '+error.message,'error');
+  }finally{
+    el('authButton').disabled=false;
+    el('authButton').textContent=isRegister?'Создать аккаунт':'Войти';
+  }
+}
+
+async function logout(){
+  const {error}=await supabaseClient.auth.signOut();
+  if(error){
+    alert('Не удалось выйти: '+error.message);
+    return;
+  }
+  currentUser=null;
+  await updateUserInterface(null);
+  el('myOrdersList').innerHTML='';
+  el('myOrdersEmpty').style.display='block';
+  el('myOrdersEmpty').textContent='Войди в аккаунт, чтобы увидеть свои заказы.';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== ИНТЕРФЕЙС ПОЛЬЗОВАТЕЛЯ ===== */
+async function updateUserInterface(user){
+  currentUser=user||null;
+  const logged=!!currentUser;
+
+  el('authHeaderBtn').textContent=logged?'Мой кабинет':'Войти';
+  el('authHeaderBtn').onclick=logged?()=>goToProfile():openAuth;
+  el('userLabel').textContent=logged?currentUser.email:'';
+  el('profileNav').classList.toggle('hidden',!logged);
+  el('profile').classList.toggle('hidden',!logged);
+
+  if(logged){
+    el('profileName').textContent='Мой профиль';
+    el('profileEmail').textContent=currentUser.email||'';
+  }
+}
+
+function goToProfile(){
+  if(!currentUser){
+    openAuth();
+    return;
+  }
+  el('profile').classList.remove('hidden');
+  el('profile').scrollIntoView({behavior:'smooth'});
+  loadMyOrders();
+}
+
+/* ===== СОЗДАНИЕ ЗАКАЗА ===== */
+function openOrder(title=''){
+  if(!currentUser){
+    showMessage('authMessage','Сначала войди в аккаунт.','error');
+    openAuth();
+    return;
+  }
+  el('newTitle').value=title;
+  el('newCity').value='';
+  el('newDescription').value='';
+  showMessage('orderMessage','');
   openModal('order');
 }
 
-async function publishOrder() {
-  const message = document.getElementById('orderMessage');
-  const title = document.getElementById('newTitle').value.trim();
-  const city = document.getElementById('newCity').value.trim();
-  const description = document.getElementById('newDescription').value.trim();
+async function publishOrder(){
+  const title=el('newTitle').value.trim();
+  const city=el('newCity').value.trim();
+  const description=el('newDescription').value.trim();
 
-  if (!title || !city) {
-    message.textContent = 'Заполни название заказа и город.';
+  if(!title||!city){
+    showMessage('orderMessage','Заполни название заказа и город.','error');
     return;
   }
 
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  const user = sessionData.session?.user;
+  const {data:sessionData}=await supabaseClient.auth.getSession();
+  const user=sessionData.session?.user;
 
-  if (!user) {
-    message.textContent = 'Сначала войди в аккаунт.';
-    openModal('auth');
+  if(!user){
+    showMessage('orderMessage','Сначала войди в аккаунт.','error');
+    openAuth();
     return;
   }
 
-  message.textContent = 'Публикуем заказ...';
+  const button=document.querySelector('#order .btn');
+  button.disabled=true;
+  button.textContent='Публикуем...';
 
-  const { error } = await supabaseClient.from('orders').insert({
-    user_id: user.id,
-    title: title,
-    city: city,
-    description: description
-  });
+  try{
+    const {error}=await supabaseClient.from('orders').insert({
+      user_id:user.id,
+      title:title,
+      city:city,
+      description:description
+    });
 
-  if (error) {
-    message.textContent = 'Ошибка публикации: ' + error.message;
+    if(error){
+      showMessage('orderMessage','Ошибка публикации: '+error.message,'error');
+      return;
+    }
+
+    showMessage('orderMessage','Заказ успешно опубликован!','success');
+    el('newTitle').value='';
+    el('newCity').value='';
+    el('newDescription').value='';
+
+    await loadOrders();
+    await loadMyOrders();
+  }catch(error){
+    showMessage('orderMessage','Ошибка: '+error.message,'error');
+  }finally{
+    button.disabled=false;
+    button.textContent='Опубликовать заказ';
+  }
+}
+
+/* ===== КАРТОЧКА ЗАКАЗА ===== */
+function createOrderCard(order,own=false){
+  const card=document.createElement('div');
+  card.className='service';
+
+  const title=document.createElement('h3');
+  title.textContent=order.title;
+
+  const city=document.createElement('p');
+  city.textContent='📍 '+order.city;
+
+  const description=document.createElement('p');
+  description.textContent=order.description||'Без описания';
+
+  const date=document.createElement('p');
+  date.className='orderdate';
+  date.textContent='📅 '+new Date(order.created_at).toLocaleDateString('ru-RU');
+
+  card.append(title,city,description,date);
+
+  if(own){
+    const actions=document.createElement('div');
+    actions.className='orderactions';
+
+    const badge=document.createElement('span');
+    badge.className='badge';
+    badge.textContent='Мой заказ';
+
+    const del=document.createElement('button');
+    del.className='btn red small';
+    del.textContent='Удалить заказ';
+    del.style.width='100%';
+    del.onclick=()=>deleteOrder(order.id);
+
+    actions.append(badge,del);
+    card.append(actions);
+  }
+
+  return card;
+}
+
+/* ===== ВСЕ ЗАКАЗЫ ===== */
+async function loadOrders(){
+  const list=el('ordersList');
+  const empty=el('ordersEmpty');
+  list.innerHTML='';
+  empty.style.display='none';
+
+  const {data,error}=await supabaseClient
+    .from('orders')
+    .select('id,title,city,description,created_at')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    empty.textContent='Ошибка загрузки: '+error.message;
+    empty.style.display='block';
     return;
   }
 
-  message.textContent = 'Заказ успешно опубликован!';
+  if(!data||data.length===0){
+    empty.textContent='Пока заказов нет.';
+    empty.style.display='block';
+    return;
+  }
 
-  document.getElementById('newTitle').value = '';
-  document.getElementById('newCity').value = '';
-  document.getElementById('newDescription').value = '';
+  data.forEach(order=>list.appendChild(createOrderCard(order,false)));
+}
+
+/* ===== МОИ ЗАКАЗЫ ===== */
+async function loadMyOrders(){
+  const list=el('myOrdersList');
+  const empty=el('myOrdersEmpty');
+  list.innerHTML='';
+  empty.style.display='none';
+
+  if(!currentUser){
+    empty.textContent='Войди в аккаунт, чтобы увидеть свои заказы.';
+    empty.style.display='block';
+    return;
+  }
+
+  const {data,error}=await supabaseClient
+    .from('orders')
+    .select('id,title,city,description,created_at')
+    .eq('user_id',currentUser.id)
+    .order('created_at',{ascending:false});
+
+  if(error){
+    empty.textContent='Ошибка загрузки: '+error.message;
+    empty.style.display='block';
+    return;
+  }
+
+  if(!data||data.length===0){
+    empty.textContent='У тебя пока нет заказов.';
+    empty.style.display='block';
+    return;
+  }
+
+  data.forEach(order=>list.appendChild(createOrderCard(order,true)));
+}
+
+/* ===== УДАЛЕНИЕ СВОЕГО ЗАКАЗА ===== */
+async function deleteOrder(id){
+  if(!confirm('Точно удалить этот заказ?'))return;
+
+  const {error}=await supabaseClient
+    .from('orders')
+    .delete()
+    .eq('id',id)
+    .eq('user_id',currentUser.id);
+
+  if(error){
+    alert('Ошибка удаления: '+error.message);
+    return;
+  }
 
   await loadOrders();
+  await loadMyOrders();
 }
 
-function toggleAuth() {
-  isRegister = !isRegister;
+/* ===== ЗАПУСК ===== */
+async function initialize(){
+  const {data,error}=await supabaseClient.auth.getSession();
 
-  document.getElementById('authTitle').textContent =
-    isRegister ? 'Регистрация' : 'Вход';
-
-  document.getElementById('authButton').textContent =
-    isRegister ? 'Создать аккаунт' : 'Войти';
-
-  document.getElementById('authToggle').textContent =
-    isRegister ? 'Уже есть аккаунт? Войти' : 'Создать аккаунт';
-
-  document.getElementById('authMessage').textContent = '';
-}
-
-async function authAction() {
-  const email = document.getElementById('authEmail').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const message = document.getElementById('authMessage');
-
-  if (!email || !password) {
-    message.textContent = 'Заполни email и пароль.';
-    return;
+  if(error){
+    console.error('Ошибка сессии:',error.message);
   }
 
-  if (password.length < 6) {
-    message.textContent = 'Пароль должен содержать минимум 6 символов.';
-    return;
-  }
+  await updateUserInterface(data?.session?.user||null);
+  await loadOrders();
+  await loadMyOrders();
 
-  message.textContent = 'Подождите...';
-
-  let result;
-
-  if (isRegister) {
-    result = await supabaseClient.auth.signUp({ email, password });
-  } else {
-    result = await supabaseClient.auth.signInWithPassword({ email, password });
-  }
-
-  if (result.error) {
-    message.textContent = 'Ошибка: ' + result.error.message;
-    return;
-  }
-
-  if (isRegister && !result.data.session) {
-    message.textContent = 'Аккаунт создан! Проверь почту и подтверди регистрацию.';
-    return;
-  }
-
-  message.textContent = 'Успешно! Ты вошёл в аккаунт.';
-  closeModal('auth');
-}
-
-async function loadOrders() {
-  const list = document.getElementById('ordersList');
-  const empty = document.getElementById('ordersEmpty');
-
-  list.innerHTML = '';
-  empty.style.display = 'none';
-
-  const { data, error } = await supabaseClient
-    .from('orders')
-    .select('id, title, city, description, created_at')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    empty.textContent = 'Ошибка загрузки: ' + error.message;
-    empty.style.display = 'block';
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    empty.textContent = 'Пока заказов нет.';
-    empty.style.display = 'block';
-    return;
-  }
-
-  data.forEach(order => {
-    const card = document.createElement('div');
-    card.className = 'service';
-
-    const title = document.createElement('h3');
-    title.textContent = order.title;
-
-    const city = document.createElement('p');
-    city.textContent = '📍 ' + order.city;
-
-    const description = document.createElement('p');
-    description.textContent = order.description || 'Без описания';
-
-    const date = document.createElement('p');
-    date.textContent = new Date(order.created_at).toLocaleDateString('ru-RU');
-
-    card.append(title, city, description, date);
-    list.appendChild(card);
+  supabaseClient.auth.onAuthStateChange(async(event,session)=>{
+    await updateUserInterface(session?.user||null);
+    if(session?.user){
+      await loadMyOrders();
+    }
   });
 }
 
-loadOrders();
-
+initialize();
 </script>
 </body>
 </html>
+
+
 
 
 
