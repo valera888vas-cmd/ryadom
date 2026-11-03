@@ -152,6 +152,16 @@ footer p{color:#aab6ce;font-size:13px}
 </div>
 </section>
 
+<section class="section" id="publishedOrders">
+  <div class="sectionhead">
+    <h2>Опубликованные заказы</h2>
+    <button class="btn light" onclick="loadOrders()">Обновить</button>
+  </div>
+
+  <div class="cards" id="ordersList"></div>
+  <p class="empty" id="ordersEmpty">Пока заказов нет.</p>
+</section>
+
 <section class="section" id="advantages">
 <div class="sectionhead"><h2>Почему «Рядом»?</h2></div>
 <div class="benefits">
@@ -243,6 +253,70 @@ function searchServices() {
 function openOrder(title) {
   document.getElementById('newTitle').value = title;
   openModal('order');
+}
+
+async function publishOrder() {
+  const message = document.getElementById('orderMessage');
+
+  const title = document.getElementById('newTitle').value.trim();
+  const city = document.getElementById('newCity').value.trim();
+  const description = document.getElementById('newDescription').value.trim();
+
+  if (!title || !city) {
+    message.textContent = 'Заполни название заказа и город.';
+    return;
+  }
+
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = sessionData.session?.user;
+
+  if (!user) {
+    message.textContent = 'Сначала войди в аккаунт.';
+    openModal('auth');
+    return;
+  }
+
+  message.textContent = 'Публикуем заказ...';
+
+  const { error } = await supabaseClient
+    .from('orders')
+    .insert({
+      user_id: user.id,
+      title: title,
+      city: city,
+      description: description
+    });
+
+  if (error) {
+    message.textContent = 'Ошибка публикации: ' + error.message;
+    return;
+  }
+
+  message.textContent = 'Заказ успешно опубликован!';
+
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newCity').value = '';
+  document.getElementById('newDescription').value = '';
+}
+
+  const { error } = await supabaseClient
+    .from('orders')
+    .insert({
+      user_id: user.id,
+      title: title,
+      city: city,
+      description: description
+    });
+
+  if (error) {
+    message.textContent = 'Ошибка публикации: ' + error.message;
+    return;
+  }
+
+  message.textContent = 'Заказ успешно опубликован!';
+  document.getElementById('newTitle').value = '';
+  document.getElementById('newCity').value = '';
+  document.getElementById('newDescription').value = '';
 }
 
 function toggleAuth() {
